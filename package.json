@@ -1,0 +1,33 @@
+{
+  "name": "v6dns",
+  "version": "1.0.0",
+  "description": "A DNS Server which let IPv4 first devices to use IPv6 first.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Adam Yi",
+  "license": "MIT",
+  "dependencies": {
+    "native-dns": "*",
+    "async": "*"
+  },
+  "bin": {
+    "v6dns": "v6dns.js"
+  },
+  "main": "v6dns.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamyi/v6dns.git"
+  },
+  "keywords": [
+    "dns",
+    "IPv6",
+    "relay",
+    "v6dns"
+  ],
+  "bugs": {
+    "url": "https://github.com/adamyi/v6dns/issues"
+  },
+  "homepage": "https://github.com/adamyi/v6dns#readme"
+}
