@@ -51,7 +51,7 @@ var onTimeout = function() {
   console.log('Time out');
 };
 
-var authority = { address: '114.114.114.114' , port: 53, type: 'udp' }
+var authority = { address: '8.8.8.8' , port: 53, type: 'udp' }
 
 var proxy = function(question, response, cb) {
   console.log('proxying', question.name);
