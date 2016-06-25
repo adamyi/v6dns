@@ -1,6 +1,6 @@
 v6dns
 ------
-A DNS Server which lets IPv4 first devices to use IPv6 first.
+A DNS Server which lets IPv4-prioritized devices to use IPv6 first.
 
 ### Installation
 
@@ -13,13 +13,25 @@ npm -g install v6dns
 ### Usage
 
 ```
-v6dns [port] [address]
+v6dns [host] [port] [server]
 ```
-The command above will run a DNS relay listening on address:port, treating type A queries specially as mentioned below.
+The command above will run a DNS relay listening on host:port, forwarding to server and treating type A queries specially as mentioned below.
 
-By default, the address is 127.0.0.1:53
+By default, the address is 127.0.0.1, the port is 53, and the server is 8.8.8.8. Configuration file can be used to change that default settings as well. For details on that, please see the next section.
 
-It works better with cache. (e.g. using dnsmasq to forward)
+It works better with cache. (e.g. using dnsmasq to forward again)
+
+### Configuration
+The configuration file is at /etc/v6dns.yaml
+
+Here's a sample configuration:
+```
+# v6dns Configuration
+# The location of this file should be /etc/v6dns.yaml
+host:	127.0.0.1
+port:	53
+server:	8.8.8.8
+```
 
 ### Procedure
 

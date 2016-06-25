@@ -1,6 +1,6 @@
 {
   "name": "v6dns",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A DNS Server which let IPv4 first devices to use IPv6 first.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,9 @@
   "license": "MIT",
   "dependencies": {
     "native-dns": "*",
-    "async": "*"
+    "async": "*",
+    "etc": "*",
+    "etc-yaml": "*"
   },
   "bin": {
     "v6dns": "v6dns.js"

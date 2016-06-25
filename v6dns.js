@@ -5,10 +5,12 @@
 var dns = require('native-dns'),
   async = require('async'),
   tcpserver = dns.createTCPServer(),
-  server = dns.createServer();
+  server = dns.createServer(),
+  etc = require('etc'),
+  yml = require('etc-yaml');
 
 var onMessage = function (request, response) {
-  console.log('request from:', request.address);
+  //console.log('request from:', request.address);
 
   var f = [];
   request.question.forEach( function(question) {
@@ -51,10 +53,8 @@ var onTimeout = function() {
   console.log('Time out');
 };
 
-var authority = { address: '8.8.8.8' , port: 53, type: 'udp' }
-
 var proxy = function(question, response, cb) {
-  console.log('proxying', question.name);
+  //console.log('proxying', question.name);
   var request = dns.Request({
     question: question,
     server: authority,
@@ -74,7 +74,7 @@ var proxy = function(question, response, cb) {
 }
 
 var testAAAA = function(question, f, response, cb) {
-  console.log('Testing AAAA for', question.name);
+  //console.log('Testing AAAA for', question.name);
   var request = dns.Request({
     question: question,
     server: authority,
@@ -109,13 +109,36 @@ var testAAAA = function(question, f, response, cb) {
   //question.type = dns.consts.NAME_TO_QTYPE.A;
 }
 
+var conf = etc().use(yml);
+conf.argv();
+if (typeof conf.get('_')[0] != 'undefined')
+  conf.set('host', conf.get('_')[0]);
+if (typeof conf.get('_')[1] != 'undefined')
+  conf.set('port', conf.get('_')[1]);
+if (typeof conf.get('_')[2] != 'undefined')
+  conf.set('server', conf.get('_')[2]);
+
+conf.file('/etc/v6dns.yaml');
+conf.add({
+  host: '127.0.0.1',
+  port: 53,
+  server: '8.8.8.8'
+});
+
+conf.clear('_');
+conf.clear('$0');
+
+console.log('v6dns, Using configuration: ', conf.toJSON());
+
+var authority = { address: conf.get('server') , port: 53, type: 'udp' };
+
 server.on('request', onMessage);
 server.on('error', onError);
 server.on('listening', onListening);
 server.on('socketError', onSocketError);
 server.on('close', onClose);
 
-server.serve(process.argv[2] || 53, process.argv[3] || '127.0.0.1');
+server.serve(conf.get('port'), conf.get('host'));
 
 tcpserver.on('request', onMessage);
 tcpserver.on('error', onError);
@@ -123,4 +146,4 @@ tcpserver.on('listening', onListening);
 tcpserver.on('socketError', onSocketError);
 tcpserver.on('close', onClose);
 
-tcpserver.serve(process.argv[2] || 53, process.argv[3] || '127.0.0.1');
+tcpserver.serve(conf.get('port'), conf.get('host'));

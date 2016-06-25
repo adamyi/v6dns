@@ -1,0 +1,5 @@
+# v6dns Configuration
+# The location of this file should be /etc/v6dns.yaml
+host:	127.0.0.1
+port:	53
+server:	8.8.8.8
