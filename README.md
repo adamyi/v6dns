@@ -13,7 +13,7 @@ npm -g install v6dns
 ### Usage
 
 ```
-sinodns [port] [address]
+v6dns [port] [address]
 ```
 The command above will run a DNS relay listening on address:port, treating type A queries specially as mentioned below.
 
