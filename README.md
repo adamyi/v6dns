@@ -1,6 +1,6 @@
 v6dns
 ------
-A DNS Server which lets IPv4-prioritized devices to use IPv6 first, or lets IPv6-prioritized devices to use IPv4.
+A DNS Server which lets IPv4-prioritized devices to use IPv6 first, or lets IPv6-prioritized devices to use IPv4 first.
 
 ### Installation
 
@@ -41,7 +41,7 @@ priority:	6
 
 Here's how it works (when IPv6 is set as priority. IPv4 is similar):
 
- * If it's a type A query, send an AAAA query to Google's server
+ * If it's a type A query, send an AAAA query to upstream DNS server
  * If there's an AAAA record, forward it to client; if not, send the A query
- * For other types of queries, redirect to Google's server as well
+ * For other types of queries, redirect to upstream DNS server as well
  * Send the result to client
