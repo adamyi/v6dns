@@ -3,3 +3,4 @@
 host:	127.0.0.1
 port:	53
 server:	8.8.8.8
+serverport:	53

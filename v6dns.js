@@ -50,7 +50,7 @@ var onClose = function () {
 };
 
 var onTimeout = function() {
-  console.log('Time out');
+  //console.log('Time out');
 };
 
 var proxy = function(question, response, cb) {
@@ -58,7 +58,7 @@ var proxy = function(question, response, cb) {
   var request = dns.Request({
     question: question,
     server: authority,
-    timeout: 1000
+    timeout: 3000
   });
 
   request.on('message', function(err, msg) {
@@ -78,7 +78,7 @@ var testAAAA = function(question, f, response, cb) {
   var request = dns.Request({
     question: question,
     server: authority,
-    timeout: 1000
+    timeout: 3000
   });
   request.question.type = dns.consts.NAME_TO_QTYPE.AAAA;
 
@@ -117,12 +117,15 @@ if (typeof conf.get('_')[1] != 'undefined')
   conf.set('port', conf.get('_')[1]);
 if (typeof conf.get('_')[2] != 'undefined')
   conf.set('server', conf.get('_')[2]);
+if (typeof conf.get('_')[3] != 'undefined')
+  conf.set('serverport', conf.get('_')[3]);
 
 conf.file('/etc/v6dns.yaml');
 conf.add({
   host: '127.0.0.1',
   port: 53,
-  server: '8.8.8.8'
+  server: '8.8.8.8',
+  serverport: 53
 });
 
 conf.clear('_');
@@ -130,7 +133,7 @@ conf.clear('$0');
 
 console.log('v6dns, Using configuration: ', conf.toJSON());
 
-var authority = { address: conf.get('server') , port: 53, type: 'udp' };
+var authority = { address: conf.get('server') , port: conf.get('serverport'), type: 'udp' };
 
 server.on('request', onMessage);
 server.on('error', onError);
