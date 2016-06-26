@@ -2,6 +2,8 @@
 
 "use strict";
 
+var ver = "1.0.4";
+
 var dns = require('native-dns'),
   async = require('async'),
   tcpserver = dns.createTCPServer(),
@@ -14,19 +16,12 @@ var onMessage = function (request, response) {
 
   var f = [];
   request.question.forEach( function(question) {
-    if ( question.type == dns.consts.NAME_TO_QTYPE.A ) {
+    if ( conf.get('priority') == 6 && question.type == dns.consts.NAME_TO_QTYPE.A )
       f.push(function(cb){ testAAAA(question, f, response, cb)});
-      //question.type = dns.consts.NAME_TO_QTYPE.A;
-      //console.log('res:', res);
-      //if (!res) {
-      //  console.log('Searching A');
-      //  f.push(function(cb){ proxy(question, response, cb)});
-      //}
-      
-    }
-    else {
+    else if ( conf.get('priority') == 4 && question.type == dns.consts.NAME_TO_QTYPE.AAAA )
+      f.push(function(cb){ testAAAA(question, f, response, cb)});
+    else
       f.push(function(cb){ proxy(question, response, cb)});
-    }
   });
 
   async.series(f, function() { response.send(); });
@@ -49,9 +44,9 @@ var onClose = function () {
   console.log('server closed', this.address());
 };
 
-var onTimeout = function() {
-  //console.log('Time out');
-};
+/*var onTimeout = function() {
+  console.log('Time out');
+};*/
 
 var proxy = function(question, response, cb) {
   //console.log('proxying', question.name);
@@ -67,7 +62,7 @@ var proxy = function(question, response, cb) {
   });
   
   request.on('error', onError);
-  request.on('timeout', onTimeout);
+  //request.on('timeout', onTimeout);
 
   request.on('end', cb);
   request.send();
@@ -80,29 +75,32 @@ var testAAAA = function(question, f, response, cb) {
     server: authority,
     timeout: 3000
   });
-  request.question.type = dns.consts.NAME_TO_QTYPE.AAAA;
+  if (conf.get('priority') == 6)
+    request.question.type = dns.consts.NAME_TO_QTYPE.AAAA;
+  else
+    request.question.type = dns.consts.NAME_TO_QTYPE.A;
 
   request.on('message', function(err, msg) {
     //console.log(msg.answer.length);
-    question.type = dns.consts.NAME_TO_QTYPE.A;
+    if (conf.get('priority') == 6)
+      question.type = dns.consts.NAME_TO_QTYPE.A;
+    else
+      question.type = dns.consts.NAME_TO_QTYPE.AAAA;
     var t = true;
     msg.answer.forEach(function(a) {
-      if ( a.type == dns.consts.NAME_TO_QTYPE.AAAA ) //To Solve the IPv4 Only CNAME Case
-      {
+      if ( conf.get('priority') == 6 && a.type == dns.consts.NAME_TO_QTYPE.AAAA ) //To Solve the other type of protocol Only CNAME Case
         t = false;
-      }
+      else if ( conf.get('priority') == 4 && a.type == dns.consts.NAME_TO_QTYPE.A )
+        t = false;
     });
     if (t)
-    {
       proxy(question, response, cb);
-    }
-    else {
+    else
       cb();
-    }
   });
 
   request.on('error', onError);
-  request.on('timeout', onTimeout);
+  //request.on('timeout', onTimeout);
 
   request.send();
 
@@ -119,19 +117,27 @@ if (typeof conf.get('_')[2] != 'undefined')
   conf.set('server', conf.get('_')[2]);
 if (typeof conf.get('_')[3] != 'undefined')
   conf.set('serverport', conf.get('_')[3]);
+if (typeof conf.get('_')[4] != 'undefined')
+  conf.set('priority', conf.get('_')[4]);
 
 conf.file('/etc/v6dns.yaml');
 conf.add({
   host: '127.0.0.1',
   port: 53,
   server: '8.8.8.8',
-  serverport: 53
+  serverport: 53,
+  priority: 6
 });
 
 conf.clear('_');
 conf.clear('$0');
 
-console.log('v6dns, Using configuration: ', conf.toJSON());
+if (conf.get('priority') != 4 && conf.get('priority') != 6) {
+  console.error('Priority must be 4 or 6!');
+  process.exit();
+}
+
+console.log('v6dns', ver, '\nLovely presented by adamyi. Under MIT License.\nUsing configuration: \n', conf.toJSON());
 
 var authority = { address: conf.get('server') , port: conf.get('serverport'), type: 'udp' };
 

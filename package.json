@@ -1,7 +1,7 @@
 {
   "name": "v6dns",
-  "version": "1.0.3",
-  "description": "A DNS Server which let IPv4-prioritized devices to use IPv6 first.",
+  "version": "1.0.4",
+  "description": "A DNS Server which lets IPv4-prioritized devices to use IPv6 first, or lets IPv6-prioritized devices to use IPv4.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
