@@ -2,7 +2,7 @@
 
 "use strict";
 
-var ver = "1.0.4";
+var ver = "1.0.5";
 
 var dns = require('native-dns'),
   async = require('async'),
