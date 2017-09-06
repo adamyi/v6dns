@@ -11,8 +11,9 @@ v6dns
 [david-url]: https://david-dm.org/adamyi/v6dns
 [snyk-image]: https://snyk.io/test/npm/v6dns/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/v6dns
-[download-image]: https://img.shields.io/npm/dm/v6dns.svg?style=flat-square
-[download-url]: https://npmjs.org/package/v6dns
+[download-image]: https://img.shields.io/npm/dt/v6dns.svg?style=flat-square
+[download-url]: https://npm-stat.com/charts.html?package=v6dns&from=2016-06-24
+
 A DNS Server which lets IPv4-prioritized devices to use IPv6 first, or lets IPv6-prioritized devices to use IPv4 first.
 
 ### Installation
